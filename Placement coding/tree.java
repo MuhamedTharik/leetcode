@@ -1,98 +1,94 @@
-
 class Node{
-    public int data;
-    public Node left;
-    public Node right;
-    
-    Node(int data){
-        
-        this.data=data;
-        this.left=null;
-        this.right=null;
+    public int val;
+    public int ht;
+    Node left ,right;
+    Node(int val){
+        this.val = val;
+        ht=1;
+        this.left = null;
+        this.right = null;
     }
 }
+
+class AVL{
     
-class Tree
-{
-    public Node root = null;
-    void insert(int data)
-    {
-        Node n = new Node(data);
-        if(root == null)
-        root = n;
+    int getheight(Node node){
+        return node==null? 0:node.ht;
+    }
+    
+    int getbalance(Node node){
+        return node==null? 0:(getheight(node.left) - getheight(node.right));
+    }
+    
+    Node left(Node y){
+        Node x = y.left;
+        x.right = y;
+        return x;
+    }
+        
+    Node right(Node y){
+        Node x = y.right;
+        x.left = y;
+        return x;
+    }
+    
+    Node leftright(Node y){
+        y.left = left(y.left);
+        return right(y);
+    }
+    Node rightleft(Node y){
+        y.right = right(y.right);
+        return left(y);
+    }
+    void inorder(Node node){
+        if(node != null){
+        inorder(node.left);
+        System.out.print(node.val+" ");
+        inorder(node.right);
+    }
+
+    }
+    
+    
+    Node insert(Node node,int val){
+        if(node == null){
+            return new Node(val);
+        }
+        else if(node.val>val){
+            node.left = insert(node.left,val);
+        }
+        else if(node.val<val){
+            node.right = insert(node.right,val);
+        }
         else
-        {
-        Node temp = root;
+        return node;
         
-        while(true){
-            if(temp.data>data)
-            {
-                if(temp.left == null){
-                    temp.left = n;
-                    break;
-                }
-                else{
-                    temp = temp.left;
-                }
-            }
-            else{
-                if(temp.right == null){
-                    temp.right = n;
-                    break;
-                }
-                else{
-                    temp = temp.right;
-                }
-            }
-        }
-    }
-  }
-    
-    void inorder(Node root){
-        if(root != null){
-        inorder(root.left);
-        System.out.print(root.data+" ");
-        inorder(root.right);
-        }
-
-    }
-    
-    void preorder(Node root){
-        if(root!=null){
-        System.out.print(root.data+" ");
-        preorder(root.left);
-        preorder(root.right);
-        }
-    }
-    void postorder(Node root){
-        if(root!=null){
-        postorder(root.left);
-        postorder(root.right);
-        System.out.print(root.data+" ");
-        }
+        node.ht = Math.max(getheight(node.left),getheight(node.right))+1;
+        int bal = getbalance(node);
+        
+        if(bal > 1 && val<node.left.val)
+        Node x = right(Node y);
+        else if( bal <-1 && val>node.right.val)
+        Node x = left(Node y);
+        else if(bal<-1 && val<node.right.val)
+        Node x = leftright(Node y);
+        else if(bal >1 && val>node.left.val)
+        Node x = rightleft(Node y);
+        return node;
     }
 }
-
-
 
 public class Main{
     public static void main(String args[]){
-        Tree t = new Tree();
-        t.insert(100);
-        t.insert(30);
-        t.insert(22);
-        t.insert(21);
-        t.insert(50);
-        t.insert(35);
-        t.insert(45);
-        t.insert(70);
-        t.insert(55);
-        t.inorder(t.root);
-        System.out.println();
-        t.preorder(t.root);
-        System.out.println();
-        t.postorder(t.root);
+        AVL t = new AVL();
+        Node root = null;
+        int[] values ={20,30,25,47,67,90,33,89};
+        for(int i:values){
+            root = t.insert(root,i);
+        }
+        t.inorder(root);
+        // t.preorder(root);
+        // t.postorder(root);
+        
     }
 }
-
-    
